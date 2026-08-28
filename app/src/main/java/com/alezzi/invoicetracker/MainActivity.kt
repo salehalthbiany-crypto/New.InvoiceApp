@@ -59,7 +59,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupListeners() {
-        // إضافة سطر آمن لمنع الانهيار
         binding.btnAddRow.setOnClickListener {
             itemList.add(InvoiceItem())
             adapter.notifyItemInserted(itemList.size - 1)

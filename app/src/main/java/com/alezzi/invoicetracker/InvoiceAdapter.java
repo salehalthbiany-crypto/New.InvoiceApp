@@ -58,7 +58,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.ViewHold
         holder.etDetails.setText(item.getDetails());
         holder.tvBalance.setText(String.format(Locale.US, "%.2f", item.getBalance()));
 
-        // تهيئة التخيير والاقتراح التلقائي
+        // الاقتراح التلقائي للبضائع
         ArrayAdapter<String> autoAdapter = new ArrayAdapter<>(
                 holder.itemView.getContext(),
                 android.R.layout.simple_dropdown_item_1line,
@@ -66,7 +66,7 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.ViewHold
         );
         holder.etDetails.setAdapter(autoAdapter);
 
-        // حل مشكلة الكيبورد: عدم تحديث البيانات إلا عند توفر Focus أو الإدخال المباشر
+        // معالجة استقرار الكيبورد
         holder.etAmount.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}

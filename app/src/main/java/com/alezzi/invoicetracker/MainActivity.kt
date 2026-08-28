@@ -11,12 +11,19 @@ import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.print.PrintHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.alezzi.invoicetracker.databinding.ActivityMainBinding
+import androidx.recyclerview.widget.RecyclerView
+import org.json.JSONArray
+import org.json.JSONObject
 import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -24,15 +31,30 @@ import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding
+    private lateinit var tvDate: TextView
+    private lateinit var etCustomerName: EditText
+    private lateinit var etPaid: EditText
+    private lateinit var tvTotalAmount: TextView
+    private lateinit var tvNetRemaining: TextView
+    private lateinit var btnAddRow: Button
+    private lateinit var btnNew: Button
+    private lateinit var btnSave: Button
+    private lateinit var btnImage: Button
+    private lateinit var btnPrint: Button
+    private lateinit var tabRecord: Button
+    private lateinit var tabInvoice: Button
+    private lateinit var recyclerViewRows: RecyclerView
+    private lateinit var cardInvoice: CardView
+
     private val itemList = mutableListOf<InvoiceItem>()
     private lateinit var adapter: InvoiceAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(R.layout.activity_main)
 
+        initViews()
+        setupBackHandler()
         setupDate()
         setupRecyclerView()
         setupListeners()
@@ -40,9 +62,41 @@ class MainActivity : AppCompatActivity() {
         loadHistoryCount()
     }
 
+    private fun initViews() {
+        tvDate = findViewById(R.id.tvDate)
+        etCustomerName = findViewById(R.id.etCustomerName)
+        etPaid = findViewById(R.id.etPaid)
+        tvTotalAmount = findViewById(R.id.tvTotalAmount)
+        tvNetRemaining = findViewById(R.id.tvNetRemaining)
+        btnAddRow = findViewById(R.id.btnAddRow)
+        btnNew = findViewById(R.id.btnNew)
+        btnSave = findViewById(R.id.btnSave)
+        btnImage = findViewById(R.id.btnImage)
+        btnPrint = findViewById(R.id.btnPrint)
+        tabRecord = findViewById(R.id.tabRecord)
+        tabInvoice = findViewById(R.id.tabInvoice)
+        recyclerViewRows = findViewById(R.id.recyclerViewRows)
+        cardInvoice = findViewById(R.id.cardInvoice)
+    }
+
+    private fun setupBackHandler() {
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                AlertDialog.Builder(this@MainActivity)
+                    .setTitle("تأكيد الخروج")
+                    .setMessage("هل تريد الخروج من برنامج فواتير بقالة العزي؟")
+                    .setPositiveButton("نعم") { _, _ ->
+                        finish()
+                    }
+                    .setNegativeButton("لا", null)
+                    .show()
+            }
+        })
+    }
+
     private fun setupDate() {
         val sdf = SimpleDateFormat("yyyy/M/d", Locale.getDefault())
-        binding.tvDate.text = sdf.format(Date())
+        tvDate.text = sdf.format(Date())
     }
 
     private fun setupRecyclerView() {
@@ -54,18 +108,19 @@ class MainActivity : AppCompatActivity() {
             calculateTotals()
         }
 
-        binding.recyclerViewRows.layoutManager = LinearLayoutManager(this)
-        binding.recyclerViewRows.adapter = adapter
+        recyclerViewRows.layoutManager = LinearLayoutManager(this)
+        recyclerViewRows.adapter = adapter
     }
 
     private fun setupListeners() {
-        binding.btnAddRow.setOnClickListener {
+        btnAddRow.setOnClickListener {
             itemList.add(InvoiceItem())
             adapter.notifyItemInserted(itemList.size - 1)
+            recyclerViewRows.smoothScrollToPosition(itemList.size - 1)
             calculateTotals()
         }
 
-        binding.etPaid.addTextChangedListener(object : TextWatcher {
+        etPaid.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
@@ -73,14 +128,12 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        binding.btnNew.setOnClickListener { resetForm() }
-        binding.btnSave.setOnClickListener { saveInvoiceToHistory() }
-        binding.btnImage.setOnClickListener { saveCardAsImage(binding.cardInvoice) }
-        binding.btnPrint.setOnClickListener { printInvoiceCard(binding.cardInvoice) }
+        btnNew.setOnClickListener { resetForm() }
+        btnSave.setOnClickListener { saveInvoiceToHistory() }
+        btnImage.setOnClickListener { saveCardAsImage(cardInvoice) }
+        btnPrint.setOnClickListener { printInvoiceCard(cardInvoice) }
 
-        binding.tabRecord.setOnClickListener {
-            showHistoryDialog()
-        }
+        tabRecord.setOnClickListener { showHistoryDialog() }
     }
 
     private fun calculateTotals() {
@@ -90,17 +143,23 @@ class MainActivity : AppCompatActivity() {
             item.balance = totalAmount
         }
 
-        val paidStr = binding.etPaid.text.toString()
+        val paidStr = etPaid.text.toString()
         val paidAmount = paidStr.toDoubleOrNull() ?: 0.0
         val remainingNet = totalAmount - paidAmount
 
-        binding.tvTotalAmount.text = String.format(Locale.US, "%.2f", totalAmount)
-        binding.tvNetRemaining.text = String.format(Locale.US, "%.2f", remainingNet)
+        tvTotalAmount.text = String.format(Locale.US, "%.2f", totalAmount)
+        tvNetRemaining.text = String.format(Locale.US, "%.2f", remainingNet)
+
+        if (remainingNet > 0) {
+            tvNetRemaining.setTextColor(Color.parseColor("#E53E3E"))
+        } else {
+            tvNetRemaining.setTextColor(Color.parseColor("#059669"))
+        }
     }
 
     private fun resetForm() {
-        binding.etCustomerName.setText("")
-        binding.etPaid.setText("")
+        etCustomerName.setText("")
+        etPaid.setText("")
         itemList.clear()
         itemList.add(InvoiceItem())
         itemList.add(InvoiceItem())
@@ -112,22 +171,39 @@ class MainActivity : AppCompatActivity() {
     private fun saveInvoiceToHistory() {
         val prefs = getSharedPreferences("AlEzziPrefs", Context.MODE_PRIVATE)
         val currentCount = prefs.getInt("history_count", 0) + 1
-        val customerName = binding.etCustomerName.text.toString().ifEmpty { "عميل عام" }
-        val total = binding.tvTotalAmount.text.toString()
+        val customerName = etCustomerName.text.toString().ifEmpty { "عميل عام" }
+        val total = tvTotalAmount.text.toString()
+        val date = tvDate.text.toString()
+
+        val invoiceObj = JSONObject()
+        invoiceObj.put("id", currentCount)
+        invoiceObj.put("customer", customerName)
+        invoiceObj.put("total", total)
+        invoiceObj.put("date", date)
+
+        val itemsArr = JSONArray()
+        for (item in itemList) {
+            val itemObj = JSONObject()
+            itemObj.put("amount", item.amount)
+            itemObj.put("details", item.details)
+            itemObj.put("balance", item.balance)
+            itemsArr.put(itemObj)
+        }
+        invoiceObj.put("items", itemsArr)
 
         prefs.edit()
             .putInt("history_count", currentCount)
-            .putString("invoice_$currentCount", "فاتورة #$currentCount - $customerName - إجمالي: $total")
+            .putString("invoice_" + currentCount, invoiceObj.toString())
             .apply()
 
         loadHistoryCount()
-        Toast.makeText(this, "تم حفظ الفاتورة في السجل بنجاح", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "تم حفظ الفاتورة بالسجل بنجاح", Toast.LENGTH_SHORT).show()
     }
 
     private fun loadHistoryCount() {
         val prefs = getSharedPreferences("AlEzziPrefs", Context.MODE_PRIVATE)
         val count = prefs.getInt("history_count", 0)
-        binding.tabRecord.text = "السجل ($count) 📁"
+        tabRecord.text = "السجل (" + count + ") 📁"
     }
 
     private fun showHistoryDialog() {
@@ -139,20 +215,60 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        val historyItems = Array(count) { i ->
-            prefs.getString("invoice_${i + 1}", "فاتورة فارغة") ?: ""
+        val historyList = ArrayList<String>()
+        val jsonList = ArrayList<JSONObject>()
+
+        for (i in 1..count) {
+            val jsonStr = prefs.getString("invoice_" + i, null)
+            if (jsonStr != null) {
+                try {
+                    val obj = JSONObject(jsonStr)
+                    jsonList.add(obj)
+                    val label = "فاتورة #" + obj.optInt("id") + " - " + obj.optString("customer") + " (" + obj.optString("date") + ") - " + obj.optString("total") + " ر.ي"
+                    historyList.add(label)
+                } catch (e: Exception) {
+                    historyList.add("فاتورة #" + i)
+                }
+            }
         }
 
         AlertDialog.Builder(this)
             .setTitle("سجل فواتير بقالة العزي")
-            .setItems(historyItems, null)
+            .setItems(historyList.toTypedArray()) { _, which ->
+                if (which < jsonList.size) {
+                    loadInvoiceFromJSON(jsonList[which])
+                }
+            }
             .setPositiveButton("إغلاق", null)
             .show()
     }
 
+    private fun loadInvoiceFromJSON(obj: JSONObject) {
+        etCustomerName.setText(obj.optString("customer", ""))
+        val itemsArr = obj.optJSONArray("items")
+        itemList.clear()
+        if (itemsArr != null) {
+            for (i in 0 until itemsArr.length()) {
+                val itemObj = itemsArr.getJSONObject(i)
+                val item = InvoiceItem(
+                    amount = itemObj.optDouble("amount", 0.0),
+                    details = itemObj.optString("details", ""),
+                    balance = itemObj.optDouble("balance", 0.0)
+                )
+                itemList.add(item)
+            }
+        }
+        if (itemList.isEmpty()) {
+            itemList.add(InvoiceItem())
+        }
+        adapter.notifyDataSetChanged()
+        calculateTotals()
+        Toast.makeText(this, "تم تحميل الفاتورة من السجل", Toast.LENGTH_SHORT).show()
+    }
+
     private fun saveCardAsImage(view: View) {
         val bitmap = getBitmapFromView(view)
-        val filename = "AlEzzi_Invoice_${System.currentTimeMillis()}.png"
+        val filename = "AlEzzi_Invoice_" + System.currentTimeMillis() + ".png"
         var fos: OutputStream? = null
 
         try {
@@ -173,7 +289,7 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "تم حفظ الفاتورة كصورة بالاستوديو", Toast.LENGTH_LONG).show()
             }
         } catch (e: Exception) {
-            Toast.makeText(this, "فشل الحفظ: ${e.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "فشل الحفظ: " + e.message, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -195,17 +311,5 @@ class MainActivity : AppCompatActivity() {
         }
         view.draw(canvas)
         return bitmap
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onBackPressed() {
-        AlertDialog.Builder(this)
-            .setTitle("تأكيد الخروج")
-            .setMessage("هل تريد الخروج من برنامج فواتير بقالة العزي؟")
-            .setPositiveButton("نعم") { _, _ ->
-                super.onBackPressed()
-            }
-            .setNegativeButton("لا", null)
-            .show()
     }
 }

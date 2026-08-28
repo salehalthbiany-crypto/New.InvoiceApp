@@ -5,6 +5,8 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -16,16 +18,18 @@ import java.util.Locale;
 public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.ViewHolder> {
 
     private final List<InvoiceItem> items;
+    private final List<String> suggestions;
     private final Runnable onItemChanged;
 
-    public InvoiceAdapter(List<InvoiceItem> items, Runnable onItemChanged) {
+    public InvoiceAdapter(List<InvoiceItem> items, List<String> suggestions, Runnable onItemChanged) {
         this.items = items;
+        this.suggestions = suggestions;
         this.onItemChanged = onItemChanged;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         final EditText etAmount;
-        final EditText etDetails;
+        final AutoCompleteTextView etDetails;
         final TextView tvBalance;
         final ImageButton btnDelete;
 
@@ -54,6 +58,15 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.ViewHold
         holder.etDetails.setText(item.getDetails());
         holder.tvBalance.setText(String.format(Locale.US, "%.2f", item.getBalance()));
 
+        // تهيئة التخيير والاقتراح التلقائي
+        ArrayAdapter<String> autoAdapter = new ArrayAdapter<>(
+                holder.itemView.getContext(),
+                android.R.layout.simple_dropdown_item_1line,
+                suggestions
+        );
+        holder.etDetails.setAdapter(autoAdapter);
+
+        // حل مشكلة الكيبورد: عدم تحديث البيانات إلا عند توفر Focus أو الإدخال المباشر
         holder.etAmount.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -81,7 +94,11 @@ public class InvoiceAdapter extends RecyclerView.Adapter<InvoiceAdapter.ViewHold
             @Override
             public void afterTextChanged(Editable s) {
                 if (holder.etDetails.hasFocus()) {
-                    item.setDetails(s != null ? s.toString() : "");
+                    String detailStr = s != null ? s.toString() : "";
+                    item.setDetails(detailStr);
+                    if (!detailStr.trim().isEmpty() && !suggestions.contains(detailStr.trim())) {
+                        suggestions.add(detailStr.trim());
+                    }
                 }
             }
         });

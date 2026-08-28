@@ -1,7 +1,5 @@
 package com.alezzi.invoicetracker
 
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,7 +30,6 @@ class InvoiceAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
 
-        // تجنب إطلاق المستمعين بشكل متكرر
         holder.etAmount.setText(if (item.amount > 0) item.amount.toString() else "")
         holder.etDetails.setText(item.details)
         holder.tvBalance.text = String.format(Locale.US, "%.2f", item.balance)

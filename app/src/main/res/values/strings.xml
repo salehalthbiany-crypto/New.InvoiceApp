@@ -1,3 +1,6 @@
 <resources>
-    <string name="app_name">فواتير بقالة العزي</string>
+    <string name="app_name">بقالة العزي للمواد الغذائية</string>
+    <string name="invoice">الفاتورة</string>
+    <string name="history">السجل</string>
+    <string name="customers">العملاء</string>
 </resources>

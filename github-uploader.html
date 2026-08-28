@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Al-Azizi GitHub File Uploader</title>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<style>
+body{font-family:system-ui,-apple-system,sans-serif;background:#0e0e0f;color:#eee;margin:0;padding:18px}.card{max-width:1000px;margin:auto;background:#19191b;border:1px solid #333;border-radius:20px;padding:20px;box-sizing:border-box}h1{margin:0 0 8px;font-size:24px}.muted{color:#aaa}.grid{display:grid;gap:12px}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:720px){.row{grid-template-columns:1fr}}input,button,select{font:inherit;padding:12px;border-radius:12px;border:1px solid #444;background:#101011;color:#fff;box-sizing:border-box;width:100%}button{cursor:pointer;background:#c9a45c;color:#111;font-weight:800;border:0}button.secondary{background:#333;color:#fff}button.danger{background:#5a2222;color:#fff}.warn{padding:12px;border-radius:12px;background:#2a210f;border:1px solid #6a5327;color:#f3d28d;margin:12px 0}.files{border:1px solid #333;border-radius:14px;overflow:hidden}.filebar{display:flex;gap:8px;align-items:center;padding:10px;border-bottom:1px solid #333;background:#111}.filebar>*{width:auto}.filelist{max-height:330px;overflow:auto}.file{display:grid;grid-template-columns:34px 1fr auto;gap:8px;align-items:center;padding:8px 10px;border-bottom:1px solid #29292b}.file:last-child{border-bottom:0}.path{direction:ltr;text-align:left;word-break:break-all;font-family:ui-monospace,monospace;font-size:13px}.badge{font-size:11px;color:#aaa}.status{white-space:pre-wrap;background:#080809;border-radius:12px;padding:12px;min-height:150px;max-height:300px;overflow:auto;direction:rtl}.progress{height:9px;background:#333;border-radius:99px;overflow:hidden}.progress i{display:block;height:100%;width:0;background:#c9a45c}.stats{display:flex;gap:15px;flex-wrap:wrap;color:#bbb;font-size:13px}.small{font-size:12px}.hidden{display:none}
+</style>
+</head>
+<body><div class="card">
+<h1>أداة رفع ملفات المشروع إلى GitHub — بقالة العزي</h1>
+<p class="muted">اختر ZIP أو مجلد المشروع. الأداة تفك ZIP داخل المتصفح، تعرض كل ملف مع مساره، وتتيح فلترة واختيار الملفات قبل رفعها. لا يتم رفع ملف ZIP نفسه.</p>
+<div class="warn">التوكن يُستخدم داخل هذه الصفحة فقط ولا يتم حفظه. استخدم Fine-grained PAT بصلاحية <b>Contents: Read and write</b>، وأضف <b>Workflows: Read and write</b> إذا كنت سترفع ملفات <code>.github/workflows/</code>.</div>
+<div class="grid">
+<div class="row"><input id="token" type="password" placeholder="GitHub Personal Access Token"><input id="repo" placeholder="https://github.com/OWNER/REPO"></div>
+<div class="row"><input id="branch" placeholder="Branch" value="main"><input id="message" placeholder="Commit message" value="تحديث ملفات تطبيق بقالة العزي"></div>
+<div class="row"><input id="folder" type="file" webkitdirectory multiple><input id="zip" type="file" accept=".zip,application/zip"></div>
+<div class="row"><button class="secondary" onclick="loadFolder()">قراءة المجلد</button><button class="secondary" onclick="loadZip()">فك وقراءة ZIP</button></div>
+<div class="files">
+<div class="filebar"><input id="filter" placeholder="فلترة الملفات: kt / xml / gradle / github ..." oninput="renderFiles()"><button class="secondary" onclick="selectVisible(true)">تحديد الظاهر</button><button class="secondary" onclick="selectVisible(false)">إلغاء الظاهر</button></div>
+<div class="stats"><span id="count">0 ملف</span><span id="selected">0 محدد</span><span id="ignored">0 مستبعد</span></div>
+<div id="filelist" class="filelist"><div class="muted" style="padding:18px">لم يتم اختيار مشروع بعد.</div></div>
+</div>
+<div class="row"><button onclick="upload()">رفع الملفات المحددة إلى المستودع</button><button class="secondary" onclick="dispatch()">تشغيل GitHub Actions</button></div>
+<div class="progress"><i id="bar"></i></div><div id="status" class="status">جاهز.</div>
+</div></div>
+<script>
+const API='https://api.github.com'; const $=id=>document.getElementById(id); let items=[];
+const BLOCK_DIRS=new Set(['.git','.gradle','build','node_modules','.idea']);
+const BLOCK_FILES=new Set(['local.properties']);
+function log(s){$('status').textContent+=( $('status').textContent?'\n':'')+s; $('status').scrollTop=$('status').scrollHeight;}
+function headers(token){return {'Accept':'application/vnd.github+json','Authorization':'Bearer '+token,'X-GitHub-Api-Version':'2026-03-10','Content-Type':'application/json'};}
+async function gh(url,opt){const r=await fetch(url,opt);let d=null;try{d=await r.json()}catch{}if(!r.ok)throw Error((d&&d.message)||`HTTP ${r.status}`);return d;}
+function repoInfo(){let v=$('repo').value.trim().replace(/\/$/,'').replace(/\.git$/,'');const m=v.match(/(?:https?:\/\/)?(?:www\.)?github\.com\/([^/]+)\/([^/]+)$/);if(!m)throw Error('رابط المستودع غير صحيح');return{owner:m[1],repo:m[2]};}
+function blocked(path){const p=path.replaceAll('\\','/').replace(/^\/+/, ''); const parts=p.split('/'); return parts.some(x=>BLOCK_DIRS.has(x))||BLOCK_FILES.has(parts.at(-1));}
+function cleanPath(path){path=path.replaceAll('\\','/').replace(/^\/+/, ''); const parts=path.split('/').filter(Boolean); while(parts.length && /^__MACOSX$/.test(parts[0])) parts.shift(); if(parts.length>1 && /^alazizi-grocery-native$/i.test(parts[0])) parts.shift(); return parts.join('/');}
+function setItems(arr){items=arr.filter(x=>x.path&&!x.path.endsWith('/')); items.forEach(x=>x.ignored=blocked(x.path)); renderFiles(); updateStats();}
+function renderFiles(){const q=$('filter').value.trim().toLowerCase(); const list=$('filelist'); const visible=items.filter(x=>!q||x.path.toLowerCase().includes(q)); if(!visible.length){list.innerHTML='<div class="muted" style="padding:18px">لا توجد ملفات مطابقة.</div>';updateStats();return;} list.innerHTML=visible.map((x,i)=>`<label class="file ${x.ignored?'hidden':''}"><input type="checkbox" data-index="${items.indexOf(x)}" ${x.ignored?'disabled':''} ${x.selected?'checked':''} onchange="items[${items.indexOf(x)}].selected=this.checked;updateStats()"><span class="path">${esc(x.path)}</span><span class="badge">${x.ignored?'مستبعد تلقائياً':fmt(x.file?.size||x.size||0)}</span></label>`).join(''); updateStats();}
+function esc(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function fmt(n){if(n<1024)return n+' B'; if(n<1048576)return (n/1024).toFixed(1)+' KB'; return (n/1048576).toFixed(1)+' MB';}
+function updateStats(){$('count').textContent=items.length+' ملف';$('selected').textContent=items.filter(x=>x.selected&&!x.ignored).length+' محدد';$('ignored').textContent=items.filter(x=>x.ignored).length+' مستبعد';}
+function selectVisible(v){const q=$('filter').value.trim().toLowerCase();items.forEach(x=>{if(!x.ignored&&(!q||x.path.toLowerCase().includes(q)))x.selected=v;});renderFiles();}
+function loadFolder(){const files=[...$('folder').files]; if(!files.length){log('اختر مجلد المشروع أولاً.');return;} const arr=files.map(f=>({path:cleanPath(f.webkitRelativePath||f.name),file:f,selected:!blocked(cleanPath(f.webkitRelativePath||f.name))})); setItems(arr); $('status').textContent='تمت قراءة المجلد.'; log(`✓ تم العثور على ${items.length} ملف.`);}
+async function loadZip(){const f=$('zip').files[0]; if(!f){log('اختر ملف ZIP أولاً.');return;} try{$('status').textContent='فك ZIP داخل المتصفح...';const zip=await JSZip.loadAsync(await f.arrayBuffer());const arr=[];for(const [raw,e] of Object.entries(zip.files)){if(e.dir)continue;const path=cleanPath(raw);if(!path)continue;arr.push({path,file:e,selected:!blocked(path)});}setItems(arr);log(`✓ تم فك ZIP وقراءة ${items.length} ملفاً. لم يتم رفع ZIP نفسه.`);}catch(e){log('✗ فشل قراءة ZIP: '+e.message);}}
+async function fileBuffer(item){if(item.file instanceof File)return await item.file.arrayBuffer();return await item.file.async('arraybuffer');}
+function b64(buf){const a=new Uint8Array(buf),chunk=0x8000;let out='';for(let i=0;i<a.length;i+=chunk)out+=String.fromCharCode(...a.subarray(i,i+chunk));return btoa(out);}
+async function upload(){
+$('status').textContent='بدء الرفع...';$('bar').style.width='0%';
+try{const token=$('token').value.trim();const branch=$('branch').value.trim()||'main';const msg=$('message').value.trim()||'Update';if(!token)throw Error('أدخل التوكن');const {owner,repo}=repoInfo();const chosen=items.filter(x=>x.selected&&!x.ignored);if(!chosen.length)throw Error('حدد ملفاً واحداً على الأقل.');
+const ref=await gh(`${API}/repos/${owner}/${repo}/git/ref/heads/${encodeURIComponent(branch)}`,{headers:headers(token)});const parentSha=ref.object.sha;const commit=await gh(`${API}/repos/${owner}/${repo}/git/commits/${parentSha}`,{headers:headers(token)});const baseTree=commit.tree.sha;const tree=[];
+for(let i=0;i<chosen.length;i++){const x=chosen[i];const blob=await gh(`${API}/repos/${owner}/${repo}/git/blobs`,{method:'POST',headers:headers(token),body:JSON.stringify({content:b64(await fileBuffer(x)),encoding:'base64'})});tree.push({path:x.path,mode:'100644',type:'blob',sha:blob.sha});$('bar').style.width=Math.round((i+1)/chosen.length*70)+'%';log(`✓ ${i+1}/${chosen.length} ← ${x.path}`);}
+const newTree=await gh(`${API}/repos/${owner}/${repo}/git/trees`,{method:'POST',headers:headers(token),body:JSON.stringify({base_tree:baseTree,tree})});$('bar').style.width='80%';const newCommit=await gh(`${API}/repos/${owner}/${repo}/git/commits`,{method:'POST',headers:headers(token),body:JSON.stringify({message:msg,tree:newTree.sha,parents:[parentSha]})});await gh(`${API}/repos/${owner}/${repo}/git/refs/heads/${encodeURIComponent(branch)}`,{method:'PATCH',headers:headers(token),body:JSON.stringify({sha:newCommit.sha,force:false})});$('bar').style.width='100%';log(`✓ اكتمل الرفع: ${chosen.length} ملفاً.`);log(`✓ المسارات حُفظت داخل المستودع كما ظهرت في القائمة.`);log(`✓ Commit: ${newCommit.sha}`);log('✓ إذا كان build-apk.yml يعمل عند push، سيبدأ البناء تلقائياً.');
+}catch(e){log('✗ '+e.message);}}
+async function dispatch(){try{const token=$('token').value.trim();const branch=$('branch').value.trim()||'main';const {owner,repo}=repoInfo();if(!token)throw Error('أدخل التوكن');const w=await gh(`${API}/repos/${owner}/${repo}/actions/workflows?per_page=100`,{headers:headers(token)});const active=w.workflows.filter(x=>x.state==='active');if(!active.length)throw Error('لا توجد workflows مفعلة');const id=prompt('اسم workflow مثل build-apk.yml',active.find(x=>x.path.endsWith('build-apk.yml'))?.path.split('/').pop()||active[0].path.split('/').pop());if(!id)return;await gh(`${API}/repos/${owner}/${repo}/actions/workflows/${encodeURIComponent(id)}/dispatches`,{method:'POST',headers:headers(token),body:JSON.stringify({ref:branch})});log('✓ تم تشغيل workflow: '+id);}catch(e){log('✗ '+e.message);}}
+</script></body></html>

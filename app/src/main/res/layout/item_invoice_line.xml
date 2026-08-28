@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingVertical="4dp">
+    <AutoCompleteTextView
+        android:id="@+id/nameField"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:hint="الصنف"
+        android:inputType="text"
+        android:imeOptions="actionNext" />
+    <EditText
+        android:id="@+id/qtyField"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:hint="الكمية"
+        android:inputType="numberDecimal"
+        android:gravity="center" />
+    <EditText
+        android:id="@+id/priceField"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:hint="السعر"
+        android:inputType="numberDecimal"
+        android:gravity="center" />
+    <TextView
+        android:id="@+id/lineTotalText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="0.00"
+        android:gravity="center_vertical|center_horizontal"
+        android:textStyle="bold" />
+    <ImageButton
+        android:id="@+id/deleteButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@android:drawable/ic_menu_delete"
+        android:contentDescription="حذف" />
+</LinearLayout>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="?android:attr/colorBackground">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="76dp"
+        android:src="@drawable/store_logo"
+        android:scaleType="centerInside"
+        android:contentDescription="شعار بقالة العزي" />
+    <AutoCompleteTextView
+        android:id="@+id/customerField"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="اسم العميل (اختياري)"
+        android:inputType="text"
+        android:imeOptions="actionNext"
+        android:padding="12dp" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/itemsRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp" />
+    <Button
+        android:id="@+id/addRowButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="+ إضافة سطر" />
+    <TextView
+        android:id="@+id/totalText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="الإجمالي: 0.00"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:padding="10dp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/newButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="جديد" />
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="حفظ الفاتورة" />
+        <Button
+            android:id="@+id/shareButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="مشاركة" />
+    </LinearLayout>
+    <Button
+        android:id="@+id/printButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="طباعة حرارية Bluetooth / ESC-POS" />
+</LinearLayout>

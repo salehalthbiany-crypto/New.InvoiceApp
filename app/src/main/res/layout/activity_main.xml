@@ -17,325 +17,435 @@
         android:textSize="20sp"
         android:textStyle="bold" />
 
+    <!-- التبويبات الثلاثة الرئيسية -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="2">
+        android:weightSum="3">
 
         <Button
-            android:id="@+id/tabRecord"
+            android:id="@+id/tabInvoiceBtn"
             android:layout_width="0dp"
             android:layout_height="48dp"
-            android:layout_marginEnd="6dp"
-            android:layout_weight="1"
-            android:backgroundTint="#2D3748"
-            android:text="السجل (0) 📁"
-            android:textColor="#E2E8F0"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            app:cornerRadius="8dp" />
-
-        <Button
-            android:id="@+id/tabInvoice"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="6dp"
+            android:layout_marginEnd="3dp"
             android:layout_weight="1"
             android:backgroundTint="#059669"
             android:text="الفاتورة 📝"
             android:textColor="#FFFFFF"
-            android:textSize="15sp"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:cornerRadius="8dp" />
+
+        <Button
+            android:id="@+id/tabRecordBtn"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginHorizontal="3dp"
+            android:layout_weight="1"
+            android:backgroundTint="#2D3748"
+            android:text="السجل (0) 📁"
+            android:textColor="#E2E8F0"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:cornerRadius="8dp" />
+
+        <Button
+            android:id="@+id/tabCustomersBtn"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="3dp"
+            android:layout_weight="1"
+            android:backgroundTint="#2D3748"
+            android:text="العملاء 👥"
+            android:textColor="#E2E8F0"
+            android:textSize="14sp"
             android:textStyle="bold"
             app:cornerRadius="8dp" />
     </LinearLayout>
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardInvoice"
+    <!-- شاشة تبويب 1: الفاتورة -->
+    <LinearLayout
+        android:id="@+id/layoutTabInvoice"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="12dp"
         android:layout_weight="1"
-        app:cardBackgroundColor="#FFFFFF"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="4dp">
+        android:orientation="vertical">
 
-        <LinearLayout
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardInvoice"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/tvDate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:text="2026/8/28"
-                    android:textColor="#1A202C"
-                    android:textSize="17sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:text="العميل:"
-                    android:textColor="#1A202C"
-                    android:textSize="17sp"
-                    android:textStyle="bold" />
-            </RelativeLayout>
-
-            <EditText
-                android:id="@+id/etCustomerName"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginTop="2dp"
-                android:backgroundTint="#059669"
-                android:gravity="center"
-                android:hint="اسم العميل"
-                android:textColor="#1A202C"
-                android:textColorHint="#A0AEC0"
-                android:textSize="15sp" />
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="1"
+            app:cardBackgroundColor="#FFFFFF"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginTop="12dp"
-                android:background="#EDF2F7"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="عليه"
-                    android:textColor="#2D3748"
-                    android:textStyle="bold" />
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="#CBD5E0" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1.5"
-                    android:gravity="center"
-                    android:text="التفاصيل"
-                    android:textColor="#2D3748"
-                    android:textStyle="bold" />
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="#CBD5E0" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="الرصيد"
-                    android:textColor="#2D3748"
-                    android:textStyle="bold" />
-
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="#CBD5E0" />
-
-                <TextView
-                    android:layout_width="50dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="حذف"
-                    android:textColor="#2D3748"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#CBD5E0" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewRows"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <Button
-                android:id="@+id/btnAddRow"
-                android:layout_width="match_parent"
-                android:layout_height="46dp"
-                android:layout_marginTop="8dp"
-                android:backgroundTint="#059669"
-                android:text="➕ إضافة سطر"
-                android:textColor="#FFFFFF"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                app:cornerRadius="8dp" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:text="الواصل:"
-                    android:textColor="#1A202C"
-                    android:textSize="17sp"
-                    android:textStyle="bold" />
-
-                <EditText
-                    android:id="@+id/etPaid"
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_border_rect"
-                    android:gravity="center"
-                    android:inputType="numberDecimal"
-                    android:textColor="#1A202C" />
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_marginTop="8dp"
-                android:background="#2D3748" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="#F7FAFC"
+                android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:padding="8dp">
+                android:padding="14dp">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:text="إجمالي عليه:"
-                        android:textColor="#2D3748"
-                        android:textSize="17sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvTotalAmount"
+                        android:id="@+id/tvDate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
-                        android:text="0.00"
+                        android:text="2026/8/28"
                         android:textColor="#1A202C"
-                        android:textSize="17sp"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:text="العميل:"
+                        android:textColor="#1A202C"
+                        android:textSize="16sp"
                         android:textStyle="bold" />
                 </RelativeLayout>
 
-                <RelativeLayout
+                <EditText
+                    android:id="@+id/etCustomerName"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="2dp"
+                    android:backgroundTint="#059669"
+                    android:gravity="center"
+                    android:hint="اسم العميل"
+                    android:textColor="#1A202C"
+                    android:textColorHint="#A0AEC0"
+                    android:textSize="15sp" />
+
+                <!-- جدول العناصر -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="10dp"
+                    android:background="#EDF2F7"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="عليه"
+                        android:textColor="#2D3748"
+                        android:textStyle="bold" />
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="#CBD5E0" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.5"
+                        android:gravity="center"
+                        android:text="التفاصيل / الصنف"
+                        android:textColor="#2D3748"
+                        android:textStyle="bold" />
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="#CBD5E0" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="الرصيد"
+                        android:textColor="#2D3748"
+                        android:textStyle="bold" />
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="#CBD5E0" />
+
+                    <TextView
+                        android:layout_width="45dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="حذف"
+                        android:textColor="#2D3748"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#CBD5E0" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewRows"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <Button
+                    android:id="@+id/btnAddRow"
+                    android:layout_width="match_parent"
+                    android:layout_height="44dp"
+                    android:layout_marginTop="6dp"
+                    android:backgroundTint="#059669"
+                    android:text="➕ إضافة سطر"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="8dp" />
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp">
+                    android:layout_marginTop="8dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:text="الصافي المتبقي:"
-                        android:textColor="#2D3748"
-                        android:textSize="17sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvNetRemaining"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:text="0.00"
+                        android:layout_marginEnd="8dp"
+                        android:text="الواصل:"
                         android:textColor="#1A202C"
-                        android:textSize="17sp"
+                        android:textSize="16sp"
                         android:textStyle="bold" />
-                </RelativeLayout>
+
+                    <EditText
+                        android:id="@+id/etPaid"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_border_rect"
+                        android:gravity="center"
+                        android:inputType="numberDecimal"
+                        android:textColor="#1A202C" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginTop="6dp"
+                    android:background="#2D3748" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:background="#F7FAFC"
+                    android:orientation="vertical"
+                    android:padding="6dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:text="إجمالي عليه:"
+                            android:textColor="#2D3748"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvTotalAmount"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:text="0.00"
+                            android:textColor="#1A202C"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:text="الصافي المتبقي:"
+                            android:textColor="#2D3748"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvNetRemaining"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:text="0.00"
+                            android:textColor="#1A202C"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+                    </RelativeLayout>
+                </LinearLayout>
             </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- أزرار المشاركة السريعة عبر الواتساب -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <Button
+                android:id="@+id/btnShareWhatsappText"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_marginEnd="3dp"
+                android:layout_weight="1"
+                android:backgroundTint="#25D366"
+                android:text="واتساب (نص) 💬"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:cornerRadius="8dp" />
+
+            <Button
+                android:id="@+id/btnShareWhatsappImage"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_marginStart="3dp"
+                android:layout_weight="1"
+                android:backgroundTint="#128C7E"
+                android:text="واتساب (صورة) 🖼️"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                app:cornerRadius="8dp" />
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
 
+        <!-- أزرار التحكم -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:orientation="horizontal"
+            android:weightSum="4">
+
+            <Button
+                android:id="@+id/btnNew"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_marginEnd="2dp"
+                android:layout_weight="1"
+                android:backgroundTint="#E53E3E"
+                android:text="جديد 🗑️"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:cornerRadius="8dp" />
+
+            <Button
+                android:id="@+id/btnImage"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_marginHorizontal="2dp"
+                android:layout_weight="1"
+                android:backgroundTint="#0D9488"
+                android:text="صورة ⬇️"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:cornerRadius="8dp" />
+
+            <Button
+                android:id="@+id/btnSave"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_marginHorizontal="2dp"
+                android:layout_weight="1"
+                android:backgroundTint="#059669"
+                android:text="حفظ 💾"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:cornerRadius="8dp" />
+
+            <Button
+                android:id="@+id/btnPrint"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_marginStart="2dp"
+                android:layout_weight="1"
+                android:backgroundTint="#2563EB"
+                android:text="طباعة 🖨️"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:cornerRadius="8dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- شاشة تبويب 2: السجل -->
     <LinearLayout
+        android:id="@+id/layoutTabHistory"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginTop="10dp"
-        android:orientation="horizontal"
-        android:weightSum="4">
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:visibility="gone">
 
-        <Button
-            android:id="@+id/btnNew"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_marginEnd="3dp"
-            android:layout_weight="1"
-            android:backgroundTint="#E53E3E"
-            android:text="جديد 🗑️"
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="سجل الفواتير المحفوظة"
             android:textColor="#FFFFFF"
-            android:textSize="13sp"
-            android:textStyle="bold"
-            app:cornerRadius="8dp" />
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/btnImage"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_marginHorizontal="2dp"
-            android:layout_weight="1"
-            android:backgroundTint="#0D9488"
-            android:text="صورة ⬇️"
-            android:textColor="#FFFFFF"
-            android:textSize="13sp"
-            android:textStyle="bold"
-            app:cornerRadius="8dp" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewHistory"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp" />
+    </LinearLayout>
 
-        <Button
-            android:id="@+id/btnSave"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_marginHorizontal="2dp"
-            android:layout_weight="1"
-            android:backgroundTint="#059669"
-            android:text="حفظ 💾"
-            android:textColor="#FFFFFF"
-            android:textSize="13sp"
-            android:textStyle="bold"
-            app:cornerRadius="8dp" />
+    <!-- شاشة تبويب 3: العملاء -->
+    <LinearLayout
+        android:id="@+id/layoutTabCustomers"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:visibility="gone">
 
-        <Button
-            android:id="@+id/btnPrint"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="3dp"
-            android:layout_weight="1"
-            android:backgroundTint="#2563EB"
-            android:text="طباعة 🖨️"
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="قائمة حسابات العملاء"
             android:textColor="#FFFFFF"
-            android:textSize="13sp"
-            android:textStyle="bold"
-            app:cornerRadius="8dp" />
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewCustomers"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp" />
     </LinearLayout>
 
 </LinearLayout>

@@ -1,5 +1,7 @@
 package com.alezzi.invoicetracker
 
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -34,26 +36,35 @@ class InvoiceAdapter(
         holder.etDetails.setText(item.details)
         holder.tvBalance.text = String.format(Locale.US, "%.2f", item.balance)
 
-        holder.etAmount.setOnFocusChangeListener { _, hasFocus ->
-            if (!hasFocus) {
-                val valStr = holder.etAmount.text.toString()
-                item.amount = valStr.toDoubleOrNull() ?: 0.0
-                onItemChanged()
+        holder.etAmount.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                if (holder.etAmount.hasFocus()) {
+                    val valStr = s?.toString() ?: ""
+                    item.amount = valStr.toDoubleOrNull() ?: 0.0
+                    onItemChanged()
+                }
             }
-        }
+        })
 
-        holder.etDetails.setOnFocusChangeListener { _, hasFocus ->
-            if (!hasFocus) {
-                item.details = holder.etDetails.text.toString()
+        holder.etDetails.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                if (holder.etDetails.hasFocus()) {
+                    item.details = s?.toString() ?: ""
+                }
             }
-        }
+        })
 
         holder.btnDelete.setOnClickListener {
-            val currentPos = holder.adapterPosition
-            if (currentPos != RecyclerView.NO_POSITION && items.size > 0) {
-                items.removeAt(currentPos)
-                notifyItemRemoved(currentPos)
-                notifyItemRangeChanged(currentPos, items.size)
+            val currentPos = holder.bindingAdapterPosition
+            val pos = if (currentPos != RecyclerView.NO_POSITION) currentPos else holder.absoluteAdapterPosition
+            if (pos != RecyclerView.NO_POSITION && items.size > 0) {
+                items.removeAt(pos)
+                notifyItemRemoved(pos)
+                notifyItemRangeChanged(pos, items.size)
                 onItemChanged()
             }
         }

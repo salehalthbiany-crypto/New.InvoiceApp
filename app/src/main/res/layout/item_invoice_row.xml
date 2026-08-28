@@ -22,12 +22,13 @@
         android:layout_height="match_parent"
         android:background="#E2E8F0" />
 
-    <EditText
+    <AutoCompleteTextView
         android:id="@+id/etDetails"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1.5"
         android:background="@null"
+        android:completionThreshold="1"
         android:gravity="center"
         android:inputType="text"
         android:textColor="#1A202C"
@@ -55,7 +56,7 @@
 
     <ImageButton
         android:id="@+id/btnDeleteRow"
-        android:layout_width="50dp"
+        android:layout_width="45dp"
         android:layout_height="32dp"
         android:layout_gravity="center"
         android:background="#E53E3E"

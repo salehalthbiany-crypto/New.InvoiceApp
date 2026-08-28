@@ -50,9 +50,6 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerViewRows;
     private CardView cardInvoice;
 
-    // عناصر السجل والعملاء
-    private RecyclerView recyclerViewHistory, recyclerViewCustomers;
-
     private final List<InvoiceItem> itemList = new ArrayList<>();
     private final List<String> suggestionsList = new ArrayList<>();
     private InvoiceAdapter adapter;
@@ -97,9 +94,6 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerViewRows = findViewById(R.id.recyclerViewRows);
         cardInvoice = findViewById(R.id.cardInvoice);
-
-        recyclerViewHistory = findViewById(R.id.recyclerViewHistory);
-        recyclerViewCustomers = findViewById(R.id.recyclerViewCustomers);
     }
 
     private void setupDefaultSuggestions() {
@@ -120,9 +114,6 @@ public class MainActivity extends AppCompatActivity {
         tabInvoiceBtn.setBackgroundColor(Color.parseColor(tabIndex == 1 ? "#059669" : "#2D3748"));
         tabRecordBtn.setBackgroundColor(Color.parseColor(tabIndex == 2 ? "#059669" : "#2D3748"));
         tabCustomersBtn.setBackgroundColor(Color.parseColor(tabIndex == 3 ? "#059669" : "#2D3748"));
-
-        if (tabIndex == 2) loadHistoryCards();
-        if (tabIndex == 3) loadCustomerCards();
     }
 
     private void setupBackHandler() {
@@ -265,15 +256,6 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences("AlEzziPrefs", Context.MODE_PRIVATE);
         int count = prefs.getInt("history_count", 0);
         tabRecordBtn.setText("السجل (" + count + ") 📁");
-    }
-
-    private void loadHistoryCards() {
-        // يتم تحميل القوائم والبطاقات بالسجل ديناميكياً
-        loadHistoryCount();
-    }
-
-    private void loadCustomerCards() {
-        // يتم تحميل شاشة وحسابات العملاء
     }
 
     private void shareInvoiceTextWhatsapp() {
